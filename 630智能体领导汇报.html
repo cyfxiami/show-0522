@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI工作台三端设计方案汇报</title>
+    <style>
+        :root {
+            --bg: #0c1222;
+            --bg-card: #141c2e;
+            --bg-elevated: #1a2438;
+            --text: #e8ecf4;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-soft: rgba(59, 130, 246, 0.15);
+            --gold: #d4a853;
+            --gold-soft: rgba(212, 168, 83, 0.12);
+            --employee: #6366f1;
+            --support: #ec4899;
+            --collab: #06b6d4;
+            --success: #34d399;
+            --border: rgba(255, 255, 255, 0.08);
+            --radius: 14px;
+            --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.65;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 20% -10%, rgba(59, 130, 246, 0.18), transparent),
+                radial-gradient(ellipse 60% 40% at 90% 10%, rgba(212, 168, 83, 0.08), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .page {
+            position: relative;
+            z-index: 1;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 28px 24px 48px;
+        }
+
+        /* 标题区 */
+        .report-header {
+            background: linear-gradient(135deg, #141c2e 0%, #1e2a42 50%, #162032 100%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px 40px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .report-header::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 280px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 168, 83, 0.06));
+        }
+
+        .report-badge {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: var(--gold);
+            background: var(--gold-soft);
+            border: 1px solid rgba(212, 168, 83, 0.25);
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 14px;
+        }
+
+        .report-header h1 {
+            font-size: clamp(26px, 4vw, 36px);
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            margin-bottom: 10px;
+        }
+
+        .report-header .lead {
+            font-size: 17px;
+            color: var(--text-muted);
+            max-width: 720px;
+        }
+
+        .report-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 22px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .report-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Tab 导航 */
+        .tab-nav {
+            display: flex;
+            gap: 6px;
+            padding: 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px 18px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.25s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .tab-btn.active {
+            color: #fff;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
+        }
+
+        .tab-panel {
+            display: none;
+            animation: fadeUp 0.35s ease;
+        }
+
+        .tab-panel.active { display: block; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tab1 通用卡片 */
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: "";
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(180deg, var(--gold), var(--accent));
+            border-radius: 2px;
+        }
+
+        /* 三端矩阵 */
+        .roles-matrix {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .roles-matrix { grid-template-columns: 1fr; }
+        }
+
+        .role-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 22px 20px;
+            text-align: center;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+
+        .role-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .role-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin: 0 auto 12px;
+        }
+
+        .role-card.employee .role-icon { background: linear-gradient(135deg, var(--employee), #818cf8); }
+        .role-card.support .role-icon { background: linear-gradient(135deg, var(--support), #f472b6); }
+        .role-card.collab .role-icon { background: linear-gradient(135deg, var(--collab), #22d3ee); }
+
+        .role-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .role-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .role-status {
+            display: inline-block;
+            margin-top: 12px;
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 10px;
+        }
+
+        .status-live { background: rgba(52, 211, 153, 0.15); color: var(--success); }
+        .status-build { background: rgba(251, 191, 36, 0.12); color: #fbbf24; }
+
+        .principle-banner {
+            background: linear-gradient(90deg, var(--accent-soft), var(--gold-soft));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        .principle-banner strong { color: var(--gold); }
+
+        .cross-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .chip {
+            font-size: 12px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px dashed rgba(148, 163, 184, 0.4);
+            color: #94a3b8;
+        }
+
+        /* 三个闭环 */
+        .loops-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .loop-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            border-top: 3px solid var(--accent);
+        }
+
+        .loop-card:nth-child(2) { border-top-color: var(--support); }
+        .loop-card:nth-child(3) { border-top-color: var(--collab); }
+
+        .loop-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .loop-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loop-card:nth-child(2) .loop-num { background: rgba(236, 72, 153, 0.15); color: var(--support); }
+        .loop-card:nth-child(3) .loop-num { background: rgba(6, 182, 212, 0.15); color: var(--collab); }
+
+        .loop-title { font-weight: 600; font-size: 15px; }
+
+        .loop-flow {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .flow-step {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .flow-arrow { color: #64748b; }
+
+        .loop-note {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* 认识论三栏 */
+        .theory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 960px) {
+            .theory-grid { grid-template-columns: 1fr; }
+        }
+
+        .theory-item {
+            padding: 18px;
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .theory-item h4 {
+            font-size: 14px;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .theory-item ul {
+            padding-left: 18px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .theory-item li { margin-bottom: 6px; }
+
+        /* 数据模型 */
+        .data-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        @media (max-width: 700px) {
+            .data-row { grid-template-columns: 1fr; }
+        }
+
+        .data-item {
+            text-align: center;
+            padding: 20px;
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .data-item .icon { font-size: 28px; margin-bottom: 8px; }
+        .data-item h4 { font-size: 14px; margin-bottom: 4px; }
+        .data-item p { font-size: 12px; color: var(--text-muted); }
+
+        .source-note {
+            font-size: 12px;
+            color: #64748b;
+            text-align: right;
+            margin-top: 8px;
+        }
+
+        /* 嵌入工作台 */
+        .embed-wrap {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .embed-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding: 14px 20px;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .embed-bar .label {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .embed-bar .hint {
+            flex: 1;
+            font-size: 13px;
+            color: var(--text-muted);
+            min-width: 200px;
+        }
+
+        .embed-bar a {
+            color: var(--accent);
+            font-size: 13px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .embed-bar a:hover { text-decoration: underline; }
+
+        .workbench-frame {
+            display: block;
+            width: 100%;
+            height: calc(100vh - 240px);
+            min-height: 640px;
+            border: none;
+            background: #f1f5f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header class="report-header">
+            <h1>AI工作台三端设计方案汇报</h1>
+            <p class="lead">公司级员工工作台 · 三角色三端三闭环 · 平行可交叉，非线性串联</p>
+        </header>
+
+        <nav class="tab-nav" role="tablist">
+            <button class="tab-btn active" role="tab" aria-selected="true" data-tab="0">整体汇报说明</button>
+            <button class="tab-btn" role="tab" data-tab="1">员工工作台</button>
+            <button class="tab-btn" role="tab" data-tab="2">业务支持工作台</button>
+            <button class="tab-btn" role="tab" data-tab="3">协同工作台</button>
+        </nav>
+
+        <!-- Tab 1 -->
+        <div class="tab-panel active" id="panel-0" role="tabpanel">
+            <section class="section">
+                <h2 class="section-title">角色与闭环设计</h2>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+                    统一为<strong style="color: var(--text);">三个角色 / 三个端</strong>，对应<strong style="color: var(--text);">三个闭环</strong>。
+                    三端是同一平台上的三类角色视图，不是三套独立系统。<strong style="color: var(--gold);">不要线性串联，要平行可交叉</strong>。
+                </p>
+
+                <div class="roles-matrix">
+                    <div class="role-card employee">
+                        <div class="role-icon">👤</div>
+                        <div class="role-name">员工端</div>
+                        <div class="role-desc">业务团队 · 人人可做业务<br>业务助理机器人 + 各条线 AI 能力</div>
+                        <span class="role-status status-live">✓ 已建设 / 可演示</span>
+                    </div>
+                    <div class="role-card support">
+                        <div class="role-icon">🛠️</div>
+                        <div class="role-name">业务支持端</div>
+                        <div class="role-desc">各业务支持中心<br>质控 / 复核 / 预判 · 不管人只管业务动作</div>
+                        <span class="role-status status-build">● 建设中</span>
+                    </div>
+                    <div class="role-card collab">
+                        <div class="role-icon">🤝</div>
+                        <div class="role-name">协同端</div>
+                        <div class="role-desc">圆桌会议 · 跨部门协同<br>资源申请 · 争议拍板 · 决策追踪</div>
+                        <span class="role-status status-build">● 建设中</span>
+                    </div>
+                </div>
+
+                <div class="cross-chips">
+                    <span class="chip">员工独立完成</span>
+                    <span class="chip">员工 → 支持中心</span>
+                    <span class="chip">支持中心 → 圆桌协同</span>
+                    <span class="chip">支持中心主动前置介入</span>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title">三个闭环</h2>
+                <div class="loops-grid">
+                    <div class="loop-card">
+                        <div class="loop-head">
+                            <span class="loop-num">①</span>
+                            <span class="loop-title">员工独立完成</span>
+                        </div>
+                        <div class="loop-flow">
+                            <span class="flow-step">员工发起</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">AI 智能体</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">确认输出</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">完成</span>
+                        </div>
+                        <p class="loop-note">最常见路径。支持端可在后台规则触达感知，不强制介入。适用于标准化、风险可控的常规业务。</p>
+                    </div>
+                    <div class="loop-card">
+                        <div class="loop-head">
+                            <span class="loop-num">②</span>
+                            <span class="loop-title">员工 → 支持中心</span>
+                        </div>
+                        <div class="loop-flow">
+                            <span class="flow-step">提交工单</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">AI 预判路由</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">支持中心复核</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">完成</span>
+                        </div>
+                        <p class="loop-note">需质控/复核时启用。支持端也可规则触发主动前置介入，无需等待员工提交。</p>
+                    </div>
+                    <div class="loop-card">
+                        <div class="loop-head">
+                            <span class="loop-num">③</span>
+                            <span class="loop-title">支持中心 → 圆桌协同</span>
+                        </div>
+                        <div class="loop-flow">
+                            <span class="flow-step">提请协同</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">议题生成</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">领导决策</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">指令闭环</span>
+                        </div>
+                        <p class="loop-note">跨部门冲突、资源申请、重大事项升级。可与①②并行，不强制先后串联。</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title">数据流：工单与议题模型</h2>
+                <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 18px;">
+                    三端共用<strong style="color: var(--text);">结构化工单</strong>与<strong style="color: var(--text);">议题</strong>数据模型，
+                    支持从员工端流转至支持端，再升级为协同端议题，全程状态可追踪。
+                </p>
+                <div class="data-row">
+                    <div class="data-item">
+                        <div class="icon">📝</div>
+                        <h4>结构化工单</h4>
+                        <p>统一格式 · 对象动作结果无歧义</p>
+                    </div>
+                    <div class="data-item">
+                        <div class="icon">🔄</div>
+                        <h4>状态流转</h4>
+                        <p>三闭环并行 · 全程可追溯</p>
+                    </div>
+                    <div class="data-item">
+                        <div class="icon">📈</div>
+                        <h4>看板与决策</h4>
+                        <p>支持端看板 · 协同端圆桌议题池</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title">项目组三项建设任务</h2>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.8;">
+                    ① <strong style="color: var(--employee);">员工工作台</strong>（各业务助手，人人可做业务）<br>
+                    ② <strong style="color: var(--support);">业务支持中心智能体</strong>（各支持中心统一工作视图）<br>
+                    ③ <strong style="color: var(--collab);">圆桌会议协同端</strong>（跨部门协同与决策闭环）<br><br>
+                    模型建设与角色智能体建设两手抓、相互促进。下方 Tab 2–4 为<strong style="color: var(--text);">一人团队工作台</strong>三端现场演示。
+                </p>
+            </section>
+        </div>
+
+        <!-- Tab 2 -->
+        <div class="tab-panel" id="panel-1" role="tabpanel">
+            <div class="embed-wrap">
+                <div class="embed-bar">
+                    <span class="label">员工端 · 员工工作台</span>
+                    <span class="hint">已自动切换至左上角「员工工作台」— 工作提示、业绩绩效、AI 团队等</span>
+                    <a href="../一人团队工作台-支持人员/index.html?workspace=employee" target="_blank" rel="noopener">新窗口打开 ↗</a>
+                </div>
+                <iframe class="workbench-frame" data-workspace="employee" title="员工工作台演示"></iframe>
+            </div>
+        </div>
+
+        <!-- Tab 3 -->
+        <div class="tab-panel" id="panel-2" role="tabpanel">
+            <div class="embed-wrap">
+                <div class="embed-bar">
+                    <span class="label">业务支持端 · 业务支持工作台</span>
+                    <span class="hint">已自动切换至「业务支持工作台」— 协同响应、重点项目、圆桌协同队列</span>
+                    <a href="../一人团队工作台-支持人员/index.html?workspace=business" target="_blank" rel="noopener">新窗口打开 ↗</a>
+                </div>
+                <iframe class="workbench-frame" data-workspace="business" title="业务支持工作台演示"></iframe>
+            </div>
+        </div>
+
+        <!-- Tab 4 -->
+        <div class="tab-panel" id="panel-3" role="tabpanel">
+            <div class="embed-wrap">
+                <div class="embed-bar">
+                    <span class="label">协同端 · 协同工作台</span>
+                    <span class="hint">已自动切换至「协同工作台」— 圆桌会议、请示事项、决策关注池</span>
+                    <a href="../一人团队工作台-支持人员/index.html?workspace=collaboration" target="_blank" rel="noopener">新窗口打开 ↗</a>
+                </div>
+                <iframe class="workbench-frame" data-workspace="collaboration" title="协同工作台演示"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WORKBENCH = '../一人团队工作台-支持人员/index.html';
+
+        function loadFrame(panelIndex) {
+            const panel = document.getElementById('panel-' + panelIndex);
+            if (!panel) return;
+            const iframe = panel.querySelector('.workbench-frame');
+            if (!iframe || iframe.src) return;
+            const ws = iframe.dataset.workspace;
+            iframe.src = WORKBENCH + '?workspace=' + ws;
+        }
+
+        function switchTab(index) {
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+                btn.setAttribute('aria-selected', i === index ? 'true' : 'false');
+            });
+            document.querySelectorAll('.tab-panel').forEach((panel, i) => {
+                panel.classList.toggle('active', i === index);
+            });
+            if (index >= 1) loadFrame(index);
+        }
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => switchTab(Number(btn.dataset.tab)));
+        });
+    </script>
+</body>
+</html>
